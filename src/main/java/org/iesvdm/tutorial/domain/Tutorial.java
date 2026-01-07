@@ -20,7 +20,7 @@ public class Tutorial {
     @EqualsAndHashCode.Include
     private long id;
 
-    @Column(unique = true, length = 30, nullable = false)
+    @Column(unique = false, length = 30, nullable = false)
     private String titulo;
 
     @OneToMany( mappedBy = "tutorial", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

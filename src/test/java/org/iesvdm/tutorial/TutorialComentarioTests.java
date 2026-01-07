@@ -43,11 +43,20 @@ public class TutorialComentarioTests {
     @Order(0)
     void pruebaFetchLazyEager() {
 
-        Tutorial tutorial = tutorialRepository.save(Tutorial.builder()
-                                                        .titulo("Título 1")
-                                                        .build());
+        //Iniciamos una sesion para que no nos falle al ser Fetch LAZY
+        transactionTemplate.execute(status -> {
 
-        Tutorial tutorial2 = tutorialRepository.findById(tutorial.getId()).orElse(null);
+            Tutorial tutorial = tutorialRepository.save(Tutorial.builder()
+                    .titulo("Título 1")
+                    .build());
+
+            Tutorial tutorial2 = tutorialRepository.findById(tutorial.getId()).orElse(null);
+
+            System.out.println(tutorial2);
+
+            return null;
+
+        });
 
 
     }
