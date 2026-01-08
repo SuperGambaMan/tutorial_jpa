@@ -43,7 +43,8 @@ public class TutorialComentarioTests {
     @Order(0)
     void pruebaFetchLazyEager() {
 
-        //Iniciamos una sesion para que no nos falle al ser Fetch LAZY
+        //Iniciamos una sesión para que no nos falle al ser Fetch LAZY
+        //Transacción para que no de fallo
         transactionTemplate.execute(status -> {
 
             Tutorial tutorial = tutorialRepository.save(Tutorial.builder()
@@ -96,8 +97,8 @@ public class TutorialComentarioTests {
         Comentario comentario4 = new Comentario(0, "Texto4", tutorial);
         tutorial.getComentarios().add(comentario4);
         comentarioRepository.save(comentario4);
-
-        tutorialRepository.save(tutorial);
+        //Por seguridad mejor hacerlo pero no hace nada
+        //tutorialRepository.save(tutorial);
 
     }
 
@@ -105,7 +106,7 @@ public class TutorialComentarioTests {
     @Order(3)
     public void actualizarHijoDePadre() {
 
-        Tutorial tutorial = tutorialRepository.findById(1L).orElse(null);
+        Tutorial tutorial = tutorialRepository.findById(4L).orElse(null);
 
         //Si se utliza un fetch LAZY, mejor estrategia realizar un join fetch en JPQL
         //y cargar en la colección. NOTA: si utilizas EAGER puedes prescindir de join fetch.
