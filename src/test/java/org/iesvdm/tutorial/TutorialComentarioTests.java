@@ -141,7 +141,7 @@ public class TutorialComentarioTests {
     @Order(4)
     public void actualizarPorHijo() {
 
-        Tutorial tutorial = tutorialRepository.findById(2L).orElse(null);
+        Tutorial tutorial = tutorialRepository.findById(3L).orElse(null);
 
         //Si se utliza un fetch LAZY, mejor estrategia realizar un join fetch en JPQL
         //y cargar en la colección. NOTA: si utilizas EAGER puedes prescindir de join fetch.
@@ -168,6 +168,7 @@ public class TutorialComentarioTests {
 
         comentarioAActualizar.setTexto("EH Comentario Tutorial 2 Actualizado!!!!!!");
 
+        //Esta operacion no necesita Cascade.ALL
         comentarioRepository.save(comentarioAActualizar);
 
 
@@ -176,7 +177,7 @@ public class TutorialComentarioTests {
     @Order(5)
     public void borrarHijoDePadre() {
 
-        Tutorial tutorial = tutorialRepository.findById(1L).orElse(null);
+        Tutorial tutorial = tutorialRepository.findById(5L).orElse(null);
 
         //Si se utlizas un fetch LAZY, mejor estrategia realizar un join fetch en JPQL
         //y cargar en la colección. NOTA: si utilizas EAGER puedes prescindir de join fetch.
@@ -202,6 +203,7 @@ public class TutorialComentarioTests {
         System.out.println("Comentario a BORRAR: " + comentarioABorrar);
 
         //TECNICA BORRADO POR ENTIDAD HUERFANA
+        //No aplicar la logica es un sistema de JPA
         //FLAG -> orphanRemoval = true, cascade = CascadeType.ALL
         comentarioABorrar.setTutorial(null);
         tutorial.getComentarios().remove(comentarioABorrar);
@@ -247,6 +249,27 @@ public class TutorialComentarioTests {
 
         Tutorial tutorial = tutorialRepository.findById(1L).orElse(null);
         tutorialRepository.delete(tutorial);
+
+    }
+
+    @Test
+    @Order(8) //Test Opcional
+    public void borrarTodosLosComentarios() {
+
+        transactionTemplate.execute(status -> {
+            Tutorial tutorial = tutorialRepository.findById(4L).orElse(null);
+            tutorial.getComentarios().forEach(comentario -> {
+                System.out.println(comentario);
+                comentario.setTutorial(null);
+                comentarioRepository.delete(comentario);
+            });
+            //Hay que hacerlo con un HashSet
+
+            //tutorial.getComentarios().forEach(comentario -> comentarioRepository.delete(comentario));
+            return null;
+
+        });
+
 
     }
 
