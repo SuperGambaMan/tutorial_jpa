@@ -253,7 +253,7 @@ public class TutorialComentarioTests {
     }
 
     @Test
-    @Order(8) //Test Opcional
+    @Order(8) //Test Opcionalmente
     public void borrarTodosLosComentarios() {
 
         transactionTemplate.execute(status -> {
