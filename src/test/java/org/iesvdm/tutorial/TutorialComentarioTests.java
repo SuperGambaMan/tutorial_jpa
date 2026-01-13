@@ -16,6 +16,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * TEST ONETOMANY ORPHANREMOVAL, CASCADE.ALL, LAZY
@@ -42,6 +43,10 @@ public class TutorialComentarioTests {
     @Test
     @Order(0)
     void pruebaFetchLazyEager() {
+        //¿Por qué? la coleccion comentarios @OneToMany es un fetch LAZY, sin transaccion no lanza
+        //La query para cargar
+
+        //
 
         //Iniciamos una sesión para que no nos falle al ser Fetch LAZY
         //Transacción para que no de fallo
@@ -257,13 +262,17 @@ public class TutorialComentarioTests {
     public void borrarTodosLosComentarios() {
 
         transactionTemplate.execute(status -> {
+
             Tutorial tutorial = tutorialRepository.findById(4L).orElse(null);
+
             tutorial.getComentarios().forEach(comentario -> {
-                System.out.println(comentario);
                 comentario.setTutorial(null);
+                //Hay que hacerlo con un HashSet
+                //Set<Comentario>
+
                 comentarioRepository.delete(comentario);
             });
-            //Hay que hacerlo con un HashSet
+
 
             //tutorial.getComentarios().forEach(comentario -> comentarioRepository.delete(comentario));
             return null;

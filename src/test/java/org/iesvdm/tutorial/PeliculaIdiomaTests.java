@@ -106,9 +106,10 @@ public class PeliculaIdiomaTests {
 
     @Test
     @Order(5)
+    //Desasocia No borra
     void eliminarPeliculasAsociadasAIdioma() {
 
-        Idioma idioma2 = idiomaRepository.findById(2L).orElse(null);
+        Idioma idioma2 = idiomaRepository.findById(3L).orElse(null);
 
         idioma2.getPeliculas().forEach(pelicula -> { pelicula.setIdioma(null);
             peliculaRepository.save(pelicula);
@@ -122,16 +123,21 @@ public class PeliculaIdiomaTests {
     @Order(6)
     void eliminarPeliculasAsociadasAIdiomaEIdioma() {
 
+    transactionTemplate.execute(status -> {
+        Idioma idioma1 = idiomaRepository.findById(7L).orElse(null);
 
-        Idioma idioma1 = idiomaRepository.findById(1L).orElse(null);
+        idioma1.getPeliculas().forEach(pelicula -> {//pelicula.setIdioma(null);
+            peliculaRepository.delete(pelicula);
+        });
 
-            idioma1.getPeliculas().forEach(pelicula -> {//pelicula.setIdioma(null);
-                peliculaRepository.delete(pelicula);
-            });
-
-            //ESTE 2o FIND HAY QUE HACERLO
-        //idioma1 = idiomaRepository.findById(1L).orElse(null);
+        //ESTE 2o FIND HAY QUE HACERLO
+        //idioma1 = idiomaRepository.findById(5L).orElse(null);
         idiomaRepository.delete(idioma1);
+
+        return null;
+    }
+    );
+
 
     }
 }

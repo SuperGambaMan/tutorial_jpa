@@ -62,12 +62,13 @@ public class TagPostTests {
     @Test
     @Order(2)
     void grabarTagQueYaExiste() {
+        transactionTemplate.execute(status -> {
+            //Lo creamos y lo salvamos para que no entre en conflicto con el SET y se lo cargue
+            Tag tag3 = new Tag(null, "EEEH Tag 3!!!!", new HashSet<>());
+            tagRepository.save(tag3);
 
-        Tag tag3 = new Tag(null, "EEEH Tag 3!!!!", new HashSet<>());
-        tagRepository.save(tag3);
-
-        Post post2 = new Post(null, "Post2 - NO programando tan fácilmente...", new HashSet<>());
-        postRepository.save(post2);
+            Post post2 = new Post(null, "Post2 - NO programando tan fácilmente...", new HashSet<>());
+            postRepository.save(post2);
 
         //Si se utlizas un fetch LAZY, mejor estrategia realizar un join fetch en JPQL
         //y cargar en la colección. NOTA: si utilizas EAGER puedes prescindir de join fetch.
@@ -79,15 +80,15 @@ public class TagPostTests {
 //                .setParameter("id", post2.getId())
 //                .getResultList();
 //        post2.setTags(new HashSet<>(tags));
-        UtilJPA.initializeLazyManyToManyByJoinFetch(entityManager,
-                Tag.class,
-                Post.class,
-                post2.getId(),
-                post2::setTags
-        );
-        //
 
-        Tag tag1 = tagRepository.findById(1L).orElse(null);
+//        UtilJPA.initializeLazyManyToManyByJoinFetch(entityManager,
+//                Tag.class,
+//                Post.class,
+//                post2.getId(),
+//                post2::setTags
+//        );
+
+            Tag tag1 = tagRepository.findById(1L).orElse(null);
         //Si se utlizas un fetch LAZY, mejor estrategia realizar un join fetch en JPQL
         //y cargar en la colección. NOTA: si utilizas EAGER puedes prescindir de join fetch.
 //        List<Post> posts = entityManager.createQuery(
@@ -98,16 +99,24 @@ public class TagPostTests {
 //                .setParameter("id", tag.getId())
 //                .getResultList();
 //        tag.setPosts(new HashSet<>(posts));
-        UtilJPA.initializeLazyManyToManyByJoinFetch(entityManager,
-                Post.class,
-                Tag.class,
-                tag1.getId(),
-                tag1::setPosts
-        );
-        //
-        post2.addTag(tag1);
-        post2.addTag(tag3);
-        postRepository.save(post2);
+
+//        UtilJPA.initializeLazyManyToManyByJoinFetch(entityManager,
+//                Post.class,
+//                Tag.class,
+//                tag1.getId(),
+//                tag1::setPosts
+//        );
+
+            post2.addTag(tag1);
+        //addTag(Tag tag){
+        // tags.add(tag);
+        //tag.getPosts().add(this);
+        // }
+            post2.addTag(tag3);
+            postRepository.save(post2);
+            return null;
+        });
+
     }
 
     @Test
@@ -179,4 +188,28 @@ public class TagPostTests {
 
     }
 
+    @Test
+    @Order(5)
+    void grabarPostQueYaExiste() {
+        transactionTemplate.execute(status -> {
+            //Lo creamos y lo salvamos para que no entre en conflicto con el SET y se lo cargue
+            Tag tag4 = new Tag(null, "EEEH Tag 4!!!!", new HashSet<>());
+            tagRepository.save(tag4);
+
+            Post post3 = new Post(null, "Post3 - NO programando tan fácilmente...", new HashSet<>());
+            //postRepository.save(post3);
+
+            Post post1 = postRepository.findById(1L).orElse(null);
+
+//            addPost(Post post){
+//                posts.add(post);
+//                post.getTags().add(this);
+//            }
+            tag4.addPost(post3);
+
+            tag4.addPost(post1);
+            tagRepository.save(tag4);
+            return null;
+        });
+    }
 }

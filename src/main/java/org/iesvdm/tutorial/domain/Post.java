@@ -27,10 +27,12 @@ public class Post {
 
     @ManyToMany(mappedBy = "posts", cascade = {
             CascadeType.PERSIST,
-            CascadeType.MERGE
+            CascadeType.MERGE,
+            //CascadeType.REMOVE dado que un Tag puede estar asociado a otro
     })
     private Set<Tag> tags = new HashSet<>();
 
+    //HELPER
     public void addTag(Tag tag) {
         tags.add(tag);
         tag.getPosts().add(this);
